@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center">Select Information</h1>
+    <form id="optionForm" class="mt-4">
+        <div class="mb-3">
+            <label class="form-check-label"><input type="checkbox" class="form-check-input" name="options" value="name"> Name</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label"><input type="checkbox" class="form-check-input" name="options" value="age"> Age</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label"><input type="checkbox" class="form-check-input" name="options" value="addresses"> Address</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label"><input type="checkbox" class="form-check-input" name="options" value="doctorName"> Medical Specialty</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label"><input type="checkbox" class="form-check-input" name="options" value="insurance"> Insurance</label>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal" id="generateFormBtn">Generate Form</button>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Generated Form</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="generatedFormContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById("generateFormBtn").addEventListener("click", async function () {
+        let selectedOptions = [];
+        document.querySelectorAll('input[name="options"]:checked').forEach((checkbox) => {
+            selectedOptions.push(checkbox.value);
+        });
+
+        if (selectedOptions.length > 0) {
+            try {
+                const response = await fetch("/generate-form", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ options: selectedOptions })
+                });
+
+                if (response.ok) {
+                    const formHTML = await response.text();
+                    document.getElementById("generatedFormContainer").innerHTML = formHTML;
+                } else {
+                    console.error('Fetch request failed:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching generated form:', error);
+            }
+        } else {
+            console.error("No options selected!");
+        }
+    });
+</script>
+
+</body>
+</html>

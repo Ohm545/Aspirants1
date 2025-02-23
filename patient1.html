@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Keep all existing CSS styles unchanged */
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .token-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .token-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.08);
+        }
+
+        .token-number {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .token-time {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .finish-button {
+            background: #00b894;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background 0.2s ease, transform 0.1s ease;
+            width: 100%;
+        }
+
+        .finish-button:hover {
+            background: #00a383;
+            transform: scale(0.98);
+        }
+
+        .add-token-button {
+            background: #0984e3;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            box-shadow: 0 0.5rem 1rem rgba(9, 132, 227, 0.15);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem auto;
+        }
+
+        .add-token-button:hover {
+            transform: translateY(-2px);
+            background: #0873c4;
+        }
+
+        .control-card {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: #f8f9fa;
+        }
+
+        .control-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <h1>Live Queue Management</h1>
+        <div class="control-panel">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="control-card">
+                        <div class="control-title">Consultation Management</div>
+                        <div class="input-group mb-2">
+                            <input type="number" id="consultationTime" class="form-control" placeholder="Minutes">
+                            <button class="btn btn-primary" onclick="addConsultation(false)">Regular</button>
+                            <button class="btn btn-danger" onclick="addConsultation(true)">Emergency</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="control-card">
+                        <div class="control-title">Break Management</div>
+                        <div class="input-group">
+                            <input type="time" id="breakTime" class="form-control">
+                            <input type="number" id="breakDuration" class="form-control" placeholder="Mins">
+                            <button class="btn btn-warning" onclick="addBreak()">Add Break</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="add-token-button" data-bs-toggle="modal" data-bs-target="#tokenModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            Add New Token
+        </button>
+    </div>
+
+    <div class="token-grid" id="tokenGrid"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="tokenModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Token</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tokenForm">
+                        <div class="mb-3">
+                            <label class="form-label">Next Token Number</label>
+                            <div class="form-control-plaintext fw-bold" id="autoTokenNumber"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="tel" class="form-control" id="mobileNumber" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createToken()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let nextTokenNumber = 1;
+        const tokenQueue = [];
+        const breaks = [];
+        let emergencyBuffer = 0;
+        const tokenModal = new bootstrap.Modal(document.getElementById('tokenModal'));
+        const baseConsultationTime = 15; // Base time per patient in minutes
+
+        // Initialize modal display
+        document.getElementById('tokenModal').addEventListener('show.bs.modal', () => {
+            document.getElementById('autoTokenNumber').textContent = nextTokenNumber;
+        });
+
+        function createToken() {
+            const mobileInput = document.getElementById('mobileNumber');
+            if (!mobileInput.value) {
+                alert('Please enter mobile number');
+                return;
+            }
+
+            const tokenNumber = nextTokenNumber++;
+            tokenQueue.push(tokenNumber);
+
+            // Create token card
+            const tokenCard = document.createElement('div');
+            tokenCard.className = 'token-card';
+            tokenCard.innerHTML = `
+                <div class="token-number">Token ${tokenNumber}</div>
+                <div class="token-time">Estimated: ${calculateEstimation(tokenNumber)}</div>
+                ${tokenQueue[0] === tokenNumber ? '<button class="finish-button" onclick="completeToken(this)">Mark Completed</button>' : ''}
+            `;
+
+            document.getElementById('tokenGrid').appendChild(tokenCard);
+            mobileInput.value = '';
+            tokenModal.hide();
+            updateFinishButtons();
+        }
+
+        function completeToken(button) {
+            const tokenCard = button.closest('.token-card');
+            const tokenNumber = parseInt(tokenCard.querySelector('.token-number').textContent.replace('Token ', ''));
+            
+            // Remove from queue
+            tokenQueue.splice(tokenQueue.indexOf(tokenNumber), 1);
+            tokenCard.remove();
+            
+            // Update UI
+            updateFinishButtons();
+            updateAllEstimates();
+            
+            // Reduce emergency buffer proportionally
+            if (emergencyBuffer > 0 && tokenQueue.length > 0) {
+                emergencyBuffer -= emergencyBuffer / tokenQueue.length;
+            }
+        }
+
+        function calculateEstimation(tokenNumber) {
+            const now = new Date();
+            const position = tokenQueue.indexOf(tokenNumber);
+            let totalMinutes = (position + 1) * baseConsultationTime;
+
+            // Add active breaks
+            breaks.forEach(brk => {
+                if (now >= brk.start && now <= brk.end) {
+                    totalMinutes += brk.remaining;
+                }
+            });
+
+            // Add emergency buffer
+            if (emergencyBuffer > 0) {
+                totalMinutes += emergencyBuffer / tokenQueue.length;
+            }
+
+            const targetTime = new Date(now.getTime() + totalMinutes * 60000);
+            return targetTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function updateFinishButtons() {
+            document.querySelectorAll('.token-card').forEach(card => {
+                const tokenNumber = parseInt(card.querySelector('.token-number').textContent.replace('Token ', ''));
+                const isFirst = tokenQueue[0] === tokenNumber;
+                const button = card.querySelector('.finish-button');
+                
+                if (isFirst && !button) {
+                    card.insertAdjacentHTML('beforeend', '<button class="finish-button" onclick="completeToken(this)">Mark Completed</button>');
+                } else if (!isFirst && button) {
+                    button.remove();
+                }
+            });
+        }
+
+        function updateAllEstimates() {
+            document.querySelectorAll('.token-card').forEach(card => {
+                const tokenNumber = parseInt(card.querySelector('.token-number').textContent.replace('Token ', ''));
+                card.querySelector('.token-time').textContent = `Estimated: ${calculateEstimation(tokenNumber)}`;
+            });
+        }
+
+        function addConsultation(isEmergency) {
+            const minutes = parseInt(document.getElementById('consultationTime').value);
+            if (isNaN(minutes)) {
+                alert('Please enter valid consultation time');
+                return;
+            }
+
+            if (isEmergency) {
+                // Distribute emergency time across all patients
+                emergencyBuffer += minutes;
+            } else {
+                // Handle regular consultation (can be used for statistics)
+            }
+            
+            document.getElementById('consultationTime').value = '';
+            updateAllEstimates();
+        }
+
+        function addBreak() {
+            const timeInput = document.getElementById('breakTime').value;
+            const duration = parseInt(document.getElementById('breakDuration').value);
+            
+            if (!timeInput || isNaN(duration)) {
+                alert('Please enter valid break details');
+                return;
+            }
+
+            const [hours, minutes] = timeInput.split(':').map(Number);
+            const breakStart = new Date();
+            breakStart.setHours(hours, minutes, 0, 0);
+            
+            const now = new Date();
+            const breakEnd = new Date(breakStart.getTime() + duration * 60000);
+            
+            // Calculate remaining break time
+            let remaining = duration;
+            if (now > breakStart && now < breakEnd) {
+                remaining = Math.ceil((breakEnd - now) / 60000);
+            } else if (now > breakEnd) {
+                alert('This break time has already passed');
+                return;
+            }
+
+            breaks.push({
+                start: breakStart,
+                end: breakEnd,
+                duration: duration,
+                remaining: remaining
+            });
+
+            document.getElementById('breakTime').value = '';
+            document.getElementById('breakDuration').value = '';
+            updateAllEstimates();
+        }
+    </script>
+</body>
+</html>

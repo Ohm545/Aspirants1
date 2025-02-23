@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Patient Form Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f8ff !important;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #cfe2ff;
+        }
+        .section-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(13, 110, 253, 0.15);
+        }
+        .form-check-label {
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+            background: #f8f9ff;
+        }
+        .form-check-label:hover {
+            background: #e7f1ff;
+            transform: translateX(5px);
+        }
+        .form-check-input:checked + .form-check-label {
+            background: #cfe2ff;
+            font-weight: 600;
+            color: #0a58ca;
+        }
+        .modal-content {
+            border-radius: 15px;
+            border: 2px solid #cfe2ff;
+        }
+        .btn-primary {
+            background: #0d6efd;
+            padding: 12px 30px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+        .modal-header {
+            background: #0d6efd;
+            border-radius: 13px 13px 0 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <h1 class="text-center mb-4 display-5 text-primary fw-bold">Patient Information Selector</h1>
+    
+    <!-- Basic Patient Information Section -->
+    <div class="section-card p-4 mb-4">
+        <h3 class="mb-4 text-primary"><i class="bi bi-person-lines-fill me-2"></i>Basic Patient Information</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="name" id="nameCheck">
+                    <label class="form-check-label" for="nameCheck">Full Name</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="dateOfBirth" id="dobCheck">
+                    <label class="form-check-label" for="dobCheck">Date of Birth</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="age" id="ageCheck">
+                    <label class="form-check-label" for="ageCheck">Age</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="gender" id="genderCheck">
+                    <label class="form-check-label" for="genderCheck">Gender</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="bloodGroup" id="bloodCheck">
+                    <label class="form-check-label" for="bloodCheck">Blood Group</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="photo" id="photoCheck">
+                    <label class="form-check-label" for="photoCheck">Photo Upload</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information Section -->
+    <div class="section-card p-4 mb-4">
+        <h3 class="mb-4 text-primary"><i class="bi bi-telephone-fill me-2"></i>Contact Information</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="phoneNumber" id="phoneCheck">
+                    <label class="form-check-label" for="phoneCheck">Phone Number</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="emailAddress" id="emailCheck">
+                    <label class="form-check-label" for="emailCheck">Email Address</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="permanentAddress" id="permanentAddressCheck">
+                    <label class="form-check-label" for="permanentAddressCheck">Permanent Address</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="currentAddress" id="currentAddressCheck">
+                    <label class="form-check-label" for="currentAddressCheck">Current Address</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="emergencyContactName" id="emergencyNameCheck">
+                    <label class="form-check-label" for="emergencyNameCheck">Emergency Contact Name</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="emergencyContactRelationship" id="emergencyRelationshipCheck">
+                    <label class="form-check-label" for="emergencyRelationshipCheck">Emergency Contact Relationship</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="emergencyContactPhone" id="emergencyPhoneCheck">
+                    <label class="form-check-label" for="emergencyPhoneCheck">Emergency Contact Phone</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History & Health Information Section -->
+    <div class="section-card p-4 mb-4">
+        <h3 class="mb-4 text-primary"><i class="bi bi-heart-pulse-fill me-2"></i>Medical History & Health Information</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="currentMedication" id="currentMedicationCheck">
+                    <label class="form-check-label" for="currentMedicationCheck">Current Medication</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="allergies" id="allergiesCheck">
+                    <label class="form-check-label" for="allergiesCheck">Allergies</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="chronicDiseases" id="chronicDiseasesCheck">
+                    <label class="form-check-label" for="chronicDiseasesCheck">Chronic Diseases</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="pastSurgeries" id="pastSurgeriesCheck">
+                    <label class="form-check-label" for="pastSurgeriesCheck">Past Surgeries</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="familyMedicalHistory" id="familyMedicalHistoryCheck">
+                    <label class="form-check-label" for="familyMedicalHistoryCheck">Family Medical History</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="recentHospitalization" id="recentHospitalizationCheck">
+                    <label class="form-check-label" for="recentHospitalizationCheck">Recent Hospitalization</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="ongoingTreatments" id="ongoingTreatmentsCheck">
+                    <label class="form-check-label" for="ongoingTreatmentsCheck">Ongoing Treatments</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="disabilityStatus" id="disabilityStatusCheck">
+                    <label class="form-check-label" for="disabilityStatusCheck">Disability Status</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visit Related Information Section -->
+    <div class="section-card p-4 mb-4">
+        <h3 class="mb-4 text-primary"><i class="bi bi-calendar-event-fill me-2"></i>Visit Related Information</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="purposeOfVisit" id="purposeOfVisitCheck">
+                    <label class="form-check-label" for="purposeOfVisitCheck">Purpose of Visit</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="department" id="departmentCheck">
+                    <label class="form-check-label" for="departmentCheck">Department</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="doctor" id="doctorCheck">
+                    <label class="form-check-label" for="doctorCheck">Doctor</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="preferredAppointmentDateTime" id="preferredAppointmentDateTimeCheck">
+                    <label class="form-check-label" for="preferredAppointmentDateTimeCheck">Preferred Appointment Date and Time</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="options" value="lastVisitDate" id="lastVisitDateCheck">
+                    <label class="form-check-label" for="lastVisitDateCheck">Last Visit Date</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Patient Form Button -->
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-primary btn-lg" 
+                data-bs-toggle="modal" data-bs-target="#formModal" 
+                id="generateFormBtn">
+            Generate Patient Form
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">Generated Patient Form</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="generatedFormContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+   document.getElementById("generateFormBtn").addEventListener("click", function () {
+    let selectedOptions = [];
+    document.querySelectorAll('input[name="options"]:checked').forEach((checkbox) => {
+        selectedOptions.push(checkbox.value);
+    });
+
+    let formHTML = `
+        <form class="needs-validation" novalidate action="/patientupdate" method="POST">
+            <div class="alert alert-primary">
+                <i class="bi bi-info-circle me-2"></i>Please complete all required fields
+            </div>
+    `;
+
+    selectedOptions.forEach((option) => {
+        switch (option) {
+            // Basic Patient Information
+            case "name":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "age":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Age</label>
+                        <input type="number" class="form-control" min="0" max="120" required>
+                    </div>
+                `;
+                break;
+
+            case "dateOfBirth":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "gender":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Gender</label>
+                        <select class="form-select" required>
+                            <option value="">Select Gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                `;
+                break;
+
+            case "bloodGroup":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Blood Group</label>
+                        <select class="form-select" required>
+                            <option value="">Select Blood Type</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                        </select>
+                    </div>
+                `;
+                break;
+
+            case "photo":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Patient Photo</label>
+                        <input type="file" class="form-control" accept="image/*" required>
+                    </div>
+                `;
+                break;
+
+            // Contact Information
+            case "phoneNumber":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "emailAddress":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "permanentAddress":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Permanent Address</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "currentAddress":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Current Address</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "emergencyContactName":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Emergency Contact Name</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "emergencyContactRelationship":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Emergency Contact Relationship</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "emergencyContactPhone":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Emergency Contact Phone</label>
+                        <input type="tel" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            // Medical History & Health Information
+            case "currentMedication":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Current Medication</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "allergies":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Allergies</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "chronicDiseases":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Chronic Diseases</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "pastSurgeries":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Past Surgeries</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "familyMedicalHistory":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Family Medical History</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "recentHospitalization":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Recent Hospitalization</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "ongoingTreatments":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Ongoing Treatments</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "disabilityStatus":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Disability Status</label>
+                        <select class="form-select" required>
+                            <option value="">Select Disability Status</option>
+                            <option>None</option>
+                            <option>Physical Disability</option>
+                            <option>Mental Disability</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                `;
+                break;
+
+            // Visit Related Information
+            case "purposeOfVisit":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Purpose of Visit</label>
+                        <textarea class="form-control" rows="3" required></textarea>
+                    </div>
+                `;
+                break;
+
+            case "department":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" required>
+                            <option value="">Select Department</option>
+                            <option>Cardiology</option>
+                            <option>Neurology</option>
+                            <option>Orthopedics</option>
+                            <option>Pediatrics</option>
+                            <option>General Medicine</option>
+                        </select>
+                    </div>
+                `;
+                break;
+
+            case "doctor":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Doctor</label>
+                        <select class="form-select" required>
+                            <option value="">Select Doctor</option>
+                            <option>Dr. Smith</option>
+                            <option>Dr. Johnson</option>
+                            <option>Dr. Williams</option>
+                            <option>Dr. Brown</option>
+                        </select>
+                    </div>
+                `;
+                break;
+
+            case "preferredAppointmentDateTime":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Preferred Appointment Date and Time</label>
+                        <input type="datetime-local" class="form-control" required>
+                    </div>
+                `;
+                break;
+
+            case "lastVisitDate":
+                formHTML += `
+                    <div class="mb-4">
+                        <label class="form-label">Last Visit Date</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+                `;
+                break;
+        }
+    });
+
+    formHTML += `
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary">Submit Patient Form</button>
+        </div>
+        </form>
+    `;
+
+    document.getElementById("generatedFormContainer").innerHTML =
+        selectedOptions.length > 0
+            ? formHTML
+            : `<div class="alert alert-warning">Please select at least one information type</div>`;
+});
+</script>
+</body>
+</html>

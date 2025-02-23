@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediQueue Admin</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --indigo: #6366f1;
+            --pink: #ec4899;
+            --purple: #8b5cf6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            display: flex;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            flex: 3;
+        }
+
+        .admin-tools {
+            flex: 1;
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+        }
+
+        .hierarchy-node {
+            margin-left: 16px;
+            padding-left: 16px;
+            border-left: 2px solid #e5e7eb;
+            margin-top: 8px;
+        }
+
+        .admin-button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.2s;
+            border: 1px solid;
+            cursor: pointer;
+        }
+
+        .edit-controls {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        input {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        button:not(.admin-button) {
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid;
+            color: white;
+        }
+
+        /* New Help Modal Styles */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 90%;
+            z-index: 1000;
+        }
+
+        .help-content h3 {
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .help-content ul {
+            padding-left: 1.5rem;
+        }
+
+        .help-content li {
+            margin: 0.5rem 0;
+        }
+
+        /* Notes Modal Styles */
+        .notes-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 90%;
+            z-index: 1000;
+        }
+
+        .notes-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        #notesInput {
+            width: 100%;
+            height: 300px;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .admin-tools {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal">
+        <span class="modal-close" onclick="toggleHelp()">×</span>
+        <div class="help-content">
+            <h2>MediQueue Admin Guide</h2>
+            <h3>Main Features:</h3>
+            <ul>
+                <li><strong>Finalize Structure:</strong> Lock/Unlock the hospital hierarchy for editing</li>
+                <li><strong>Online Application:</strong> Manage patient appointment portal</li>
+                <li><strong>Camps:</strong> Organize health camps and events</li>
+                <li><strong>Maps:</strong> View hospital locations and coverage</li>
+                <li><strong>Notes:</strong> Save important memos and reminders</li>
+                <li><strong>Records:</strong> Access patient and treatment records</li>
+            </ul>
+            
+            <h3>Quick Start:</h3>
+            <ol>
+                <li>Use + buttons to build hospital structure</li>
+                <li>Click Finalize when structure is complete</li>
+                <li>Use Start Queue to begin patient flow</li>
+                <li>Access specialized tools from the right panel</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Notes Modal -->
+    <div class="notes-modal" id="notesModal">
+        <span class="modal-close" onclick="toggleNotes()">×</span>
+        <div class="notes-content">
+            <h2>Medical Notes</h2>
+            <div class="notes-toolbar">
+                <button onclick="addHeading()" style="background-color: var(--purple);">Add Heading</button>
+                <button onclick="saveNotes()" style="background-color: var(--success);">Save Notes</button>
+            </div>
+            <textarea id="notesInput"></textarea>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <h1>Welcome to MediQueue</h1>
+            
+            <div class="edit-controls" id="editControls"></div>
+            
+            <div id="nameInputContainer" style="display: none;">
+                <div id="customCategoryContainer"></div>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="nameInput" placeholder="Enter name">
+                    <button id="saveButton" style="background-color: var(--success); border-color: var(--success);">
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            <div id="hierarchyContainer"></div>
+        </div>
+
+        <div class="admin-tools">
+            <div class="admin-panel">
+                <h2>Administrative Tools</h2>
+                <button id="toggleEdit" class="admin-button" style="background-color: var(--success);">
+                    Finalize Structure
+                </button>
+                <button class="admin-button" style="background-color: var(--indigo);" onclick="window.open('/application', '_blank')">
+                    <span>Online Application</span>
+                    <span>→</span>
+                </button>
+                <form action="/camp" method="POST"> 
+                <button class="admin-button" style="background-color: var(--pink);" type="submit">
+                    <span>Camps</span>
+                    <span>→</span>
+                </button>
+                </form>
+                <button class="admin-button" style="background-color: var(--indigo);" onclick="openHospitalMap()">
+                    <span>Maps</span>
+                    <span>→</span>
+                </button>
+                <button class="admin-button" style="background-color: var(--purple);" onclick="toggleNotes()">
+                    <span>Notes</span>
+                    <span>→</span>
+                </button>
+                <button class="admin-button" style="background-color: var(--purple);" onclick="toggleHelp()">
+                    <span>Help</span>
+                    <span>→</span>
+                </button>
+                <button class="admin-button" style="background-color: var(--purple);">
+                    <span>Records</span>
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Existing state and functions remain unchanged
+let state = {
+    isEditMode: true,
+    showNameInput: false,
+    name: '',
+    hierarchy: [],
+    category: '',
+    customCategory: '',
+    addingCustomCategory: false,
+    customCategories: [],
+    selectedNode: null,
+    defaultCategories: ['Department', 'Doctor', 'Others'],
+    notes: localStorage.getItem('mediqueue_notes') || ''
+};
+
+// New Help and Notes Functions
+function toggleHelp() {
+    const helpModal = document.getElementById('helpModal');
+    helpModal.style.display = helpModal.style.display === 'block' ? 'none' : 'block';
+}
+
+function toggleNotes() {
+    const notesModal = document.getElementById('notesModal');
+    notesModal.style.display = notesModal.style.display === 'block' ? 'none' : 'block';
+    if(notesModal.style.display === 'block') {
+        document.getElementById('notesInput').value = state.notes;
+    }
+}
+
+function saveNotes() {
+    state.notes = document.getElementById('notesInput').value;
+    localStorage.setItem('mediqueue_notes', state.notes);
+    alert('Notes saved successfully!');
+}
+
+function addHeading() {
+    const notesInput = document.getElementById('notesInput');
+    const cursorPos = notesInput.selectionStart;
+    const text = notesInput.value;
+    notesInput.value = text.slice(0, cursorPos) + '\n## HEADING ##\n' + text.slice(cursorPos);
+}
+
+// Maps Functionality
+function openHospitalMap() {
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            window.open(
+                `https://www.google.com/maps/search/hospitals/@${lat},${lng},15z`,
+                '_blank'
+            );
+        }, () => {
+            alert('Could not get location. Opening default map.');
+            window.open('https://www.google.com/maps/search/hospitals', '_blank');
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+// Existing code continues unchanged below...
+document.addEventListener('DOMContentLoaded', () => {
+    renderEditControls();
+    renderHierarchy();
+    setupEventListeners();
+    setupHoverEffects();
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+});
+
+function checkMobile() {
+    state.isMobile = window.innerWidth <= 768;
+}
+
+function setupEventListeners() {
+    document.getElementById('toggleEdit').addEventListener('click', toggleEditMode);
+    document.getElementById('saveButton').addEventListener('click', handleSave);
+    document.getElementById('nameInput').addEventListener('keydown', e => handleKeyDown(e, 'name'));
+}
+
+function handleKeyDown(e, type) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        if (type === 'category') document.getElementById('nameInput').focus();
+        else if (type === 'name') handleSave();
+    }
+}
+
+function toggleEditMode() {
+    state.isEditMode = !state.isEditMode;
+    state.showNameInput = false;
+    state.name = '';
+    state.category = '';
+    state.customCategory = '';
+    state.addingCustomCategory = false;
+    document.getElementById('toggleEdit').textContent = state.isEditMode ? 'Finalize Structure' : 'Edit Structure';
+    document.getElementById('toggleEdit').style.backgroundColor = state.isEditMode ? 'var(--success)' : 'var(--primary)';
+    renderEditControls();
+    renderHierarchy();
+}
+
+function renderEditControls() {
+    const editControls = document.getElementById('editControls');
+    editControls.innerHTML = state.isEditMode ? 
+        `<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${getAllCategories().map(type => `
+                <button class="category-button" data-type="${type}" 
+                    style="background-color: var(--primary); border-color: var(--primary);">
+                    + ${type}
+                </button>
+            `).join('')}
+        </div>` : 
+        '';
+    document.querySelectorAll('.category-button').forEach(button => {
+        button.addEventListener('click', () => handleCategoryClick(null, button.dataset.type));
+    });
+}
+
+function handleCategoryClick(node, type) {
+    state.selectedNode = node;
+    if (type === 'Others') {
+        state.addingCustomCategory = true;
+        renderCustomCategoryInput();
+    } else {
+        state.category = type;
+    }
+    state.showNameInput = true;
+    document.getElementById('nameInputContainer').style.display = 'block';
+    if (state.addingCustomCategory) {
+        document.getElementById('customCategoryInput')?.focus();
+    } else {
+        document.getElementById('nameInput').focus();
+    }
+}
+
+function renderCustomCategoryInput() {
+    const container = document.getElementById('customCategoryContainer');
+    if (state.addingCustomCategory) {
+        container.innerHTML = `
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="customCategoryInput" placeholder="Enter Category Name">
+            </div>`;
+        document.getElementById('customCategoryInput').addEventListener('input', e => {
+            state.customCategory = e.target.value;
+        });
+    }
+}
+
+function handleSave() {
+    const name = document.getElementById('nameInput').value.trim();
+    if ((state.category || state.customCategory) && name) {
+        const newNode = {
+            type: state.category || state.customCategory,
+            name: name,
+            children: []
+        };
+
+        if (state.selectedNode) {
+            updateHierarchy(state.selectedNode, newNode);
+        } else {
+            state.hierarchy.push(newNode);
+        }
+
+        if (state.addingCustomCategory && state.customCategory && !state.customCategories.includes(state.customCategory)) {
+            state.customCategories.push(state.customCategory);
+        }
+
+        resetForm();
+        renderEditControls();
+        renderHierarchy();
+    }
+}
+
+function updateHierarchy(targetNode, newNode) {
+    const update = (nodes) => {
+        for (const node of nodes) {
+            if (node === targetNode) {
+                node.children.push(newNode);
+                return true;
+            }
+            if (node.children && update(node.children)) return true;
+        }
+    };
+    update(state.hierarchy);
+}
+
+function resetForm() {
+    state.name = '';
+    state.showNameInput = false;
+    state.selectedNode = null;
+    state.category = '';
+    state.addingCustomCategory = false;
+    state.customCategory = '';
+    document.getElementById('nameInputContainer').style.display = 'none';
+    document.getElementById('nameInput').value = '';
+    document.getElementById('customCategoryContainer').innerHTML = '';
+}
+
+function renderHierarchy() {
+    const container = document.getElementById('hierarchyContainer');
+    container.innerHTML = `
+        <div class="hierarchy-panel">
+            <div class="hospital-header">
+                <p style="font-weight: 700;">Hospital</p>
+                ${!state.isEditMode ? `
+                    <form action="/startqueue" method="POST">
+                        <button type="submit" style="background-color: var(--success); border-color: var(--success);">
+                            Start Queue
+                        </button>
+                    </form>
+                ` : ''}
+            </div>
+            ${renderNodes(state.hierarchy)}
+        </div>`;
+
+    addNodeEventListeners();
+}
+function renderNodes(nodes, level = 0) {
+    return nodes.map(node => `
+        <div class="hierarchy-node" style="margin-left: ${level * 16}px">
+            <div class="node-header">
+                <span style="font-weight: 600;">↳ ${node.type}: ${node.name}</span>
+                ${state.isEditMode ? `
+                    <button class="delete-button" data-nodeid="${node.name}" 
+                        style="background-color: var(--danger); border-color: var(--danger);">
+                        Delete
+                    </button>
+                ` : ''}
+            </div>
+            <div class="node-controls">
+                ${state.isEditMode ? 
+                    getAllCategories().map(type => `
+                        <button class="add-category" data-type="${type}" data-parentid="${node.name}"
+                            style="background-color: var(--primary); border-color: var(--primary);">
+                            + ${type}
+                        </button>
+                    `).join('') : `
+                    <form action="/startqueue" method="POST">
+                        <button type="submit" style="background-color: var(--success); border-color: var(--success);">
+                            Start Queue
+                        </button>
+                    </form>
+                `}
+            </div>
+            ${node.children.length > 0 ? renderNodes(node.children, level + 1) : ''}
+        </div>
+    `).join('');
+}
+
+function addNodeEventListeners() {
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', () => handleDelete(button.dataset.nodeid));
+    });
+
+    document.querySelectorAll('.add-category').forEach(button => {
+        button.addEventListener('click', () => {
+            const parentNode = findNode(state.hierarchy, button.dataset.parentid);
+            handleCategoryClick(parentNode, button.dataset.type);
+        });
+    });
+}
+
+function handleDelete(nodeId) {
+    state.hierarchy = deleteNode(state.hierarchy, nodeId);
+    renderHierarchy();
+}
+
+function deleteNode(nodes, targetId) {
+    return nodes.filter(node => {
+        if (node.name === targetId) return false;
+        if (node.children) node.children = deleteNode(node.children, targetId);
+        return true;
+    });
+}
+
+function findNode(nodes, targetId) {
+    for (const node of nodes) {
+        if (node.name === targetId) return node;
+        if (node.children) {
+            const found = findNode(node.children, targetId);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+function getAllCategories() {
+    return [...state.defaultCategories, ...state.customCategories];
+}
+
+function setupHoverEffects() {
+    document.querySelectorAll('button').forEach(button => {
+        const originalColor = button.style.backgroundColor;
+        button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = getHoverColor(originalColor);
+        });
+        button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = originalColor;
+        });
+    });
+}
+
+function getHoverColor(original) {
+    const colors = {
+        '#3b82f6': '#2563eb',
+        '#ef4444': '#dc2626',
+        '#22c55e': '#16a34a',
+        '#6366f1': '#4f46e5',
+        '#ec4899': '#db2777',
+        '#8b5cf6': '#7c3aed'
+    };
+    return colors[original] || original;
+}
+</script>
+</body>
+</html>

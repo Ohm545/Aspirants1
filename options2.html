@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Options</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            width: 300px;
+            text-align: center;
+        }
+        button {
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #00214d;
+        }
+    </style>
+</head>
+<body>
+    <h1>What do you want with our Application?</h1>
+    <br>
+    <form action="/patient" method="POST">
+        <button type="submit">
+            For Patient - Maintaining The Live Queue...
+        </button>
+    </form>
+    <br>
+    <form action="/record" method="POST">
+        <button type="submit">
+            For Hospital - Maintaining The Record of the Patient...
+        </button>
+    </form>
+</body>
+</html>
