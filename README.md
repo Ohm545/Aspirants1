@@ -8,4 +8,4 @@ Steps to run :
 
 
 Note: In this project, we have utilized the use of API key of Firestore but since we uploaded our project in public mode, They might have denied the use of database!
-BUT we proper working project before uploading which will be visible in the demo video: https://youtu.be/M7jW0xxSXDQ
+BUT we have proper working project before uploading which will be visible in the demo video: https://youtu.be/M7jW0xxSXDQ
