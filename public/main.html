@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Management System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .token-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .token-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .token-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .finish-button {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .finish-button:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .add-token-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .add-token-button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Token Management System</h1>
+    <form>
+        <label for="emergency">Add Emergency</label>
+        <input type="time" id="emergency">
+        <button type="button">Add</button><br>
+        <label for="breaktime">Break Time</label>
+        <input type="time" id="breaktime">
+        <button type="button">Add</button><br>
+    </form>
+    <button class="add-token-button" onclick="addToken()">Add Token</button>
+    <div class="token-grid" id="tokenGrid"></div>
+
+    <script>
+function addToken() {
+    const tokenGrid = document.getElementById("tokenGrid");
+    const tokenCard = document.createElement("div");
+    tokenCard.classList.add("token-card");
+
+    // Create loading state
+    tokenCard.innerHTML = `
+        <div class="token-number">Token ${tokenCounter}</div>
+        <div class="token-status">Creating...</div>
+        <button class="finish-button" disabled>Finish</button>
+    `;
+
+    tokenGrid.appendChild(tokenCard);
+
+    // Send to backend and handle response
+    sendTokenToBackend(tokenCounter)
+        .then(response => {
+            if (response.success) {
+                tokenCard.innerHTML = `
+                    <div class="token-number">Token ${response.data.tokenNumber}</div>
+                    <div class="token-status">Waiting (${response.data.estimatedWaitTime} mins)</div>
+                    <button class="finish-button" onclick="finishToken('${response.data.tokenId}', this.parentElement)">
+                        Finish
+                    </button>
+                `;
+            } else {
+                tokenCard.innerHTML = `
+                    <div class="token-number">Token ${tokenCounter}</div>
+                    <div class="token-status error">Error: ${response.error}</div>
+                    <button class="finish-button" onclick="this.parentElement.remove()">Remove</button>
+                `;
+            }
+        });
+
+    tokenCounter++;
+    }
+
+async function finishToken(tokenId, cardElement) {
+    try {
+        // Here you could add an API call to update the token status in Firestore
+        cardElement.remove();
+    } catch (error) {
+        console.error("Error finishing token:", error);
+        alert("Error finishing token. Please try again.");
+    }
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camp Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .filter-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .filter-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .filter-container select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .camp-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .camp-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .camp-card:hover {
+            transform: translateY(-5px);
+        }
+        .camp-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .camp-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .camp-card .label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Camp Data</h1>
+
+    <!-- Filter by Camp Type -->
+    <div class="filter-container">
+        <label for="campTypeFilter">Filter by Camp Type:</label>
+        <select id="campTypeFilter">
+            <option value="all">All</option>
+            <option value="general health checkup">General Health Checkup</option>
+            <option value="dental checkup">Dental Checkup</option>
+            <option value="eye checkup">Eye Checkup</option>
+            <option value="blood donation">Blood Donation</option>
+            <option value="cardiology camp">Cardiology Camp</option>
+            <option value="diabetes screening">Diabetes Screening</option>
+        </select>
+    </div>
+
+    <!-- Container for Camp Cards -->
+    <div class="camp-container" id="campContainer">
+        <!-- Camp cards will be dynamically inserted here -->
+    </div>
+
+    <script>
+        // Fetch camp data from the backend
+        async function fetchCampData() {
+            try {
+                const response = await fetch('/api/camps'); // Replace with your API endpoint
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching camp data:', error);
+                return [];
+            }
+        }
+
+        // Display camp data in the UI
+        async function displayCampData(filterType = 'all') {
+            const campContainer = document.getElementById('campContainer');
+            const camps = await fetchCampData();
+
+            // Clear existing content
+            campContainer.innerHTML = '';
+
+            // Filter camps by type
+            const filteredCamps = filterType === 'all' 
+                ? camps 
+                : camps.filter(camp => camp.campType === filterType);
+
+            if (filteredCamps.length === 0) {
+                campContainer.innerHTML = '<p>No camps found.</p>';
+                return;
+            }
+
+            // Create a card for each camp
+            filteredCamps.forEach(camp => {
+                const campCard = document.createElement('div');
+                campCard.className = 'camp-card';
+
+                campCard.innerHTML = `
+                    <h2>${camp.campTitle}</h2>
+                    <p><span class="label">Date:</span> ${camp.campDate}</p>
+                    <p><span class="label">Time:</span> ${camp.campEndTime}</p>
+                    <p><span class="label">Type:</span> ${camp.campType}</p>
+                    <p><span class="label">Venue:</span> ${camp.venue}</p>
+                    <p><span class="label">Expected Attendees:</span> ${camp.expectedServicesAttendees}</p>
+                    <p><span class="label">Benefits:</span> ${camp.benefits}</p>
+                `;
+
+                campContainer.appendChild(campCard);
+            });
+        }
+
+        // Add event listener for filter dropdown
+        document.getElementById('campTypeFilter').addEventListener('change', (e) => {
+            const selectedType = e.target.value;
+            displayCampData(selectedType);
+        });
+
+        // Initial display of all camps
+        displayCampData();
+    </script>
+</body>
+</html>

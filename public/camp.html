@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="camp.css" />
+  <title>Register your hospital & Sign up Form</title>
+</head>
+<body>
+  <div class="container">
+    <div class="forms-container">
+      <div class="signin-signup">
+        <!-- Sign-In Form -->
+        <form action="/coinform" class="sign-in-form" id="sign-in-form" method="POST">
+          <h2 class="title">Health & Wellness Camp Registration</h2>
+          <div class="input-field">
+            <i class="fas fa-hospital"></i>
+            <input type="text" placeholder="Hospital Name" name="hospitalName" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-envelope"></i>
+            <input type="email" placeholder="Email of Hospital" name="email" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Contact Person" name="contactPerson" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-phone"></i>
+            <input type="tel" placeholder="Telephone Number" pattern="\d{10}" name="telephoneNumber" required />
+          </div>
+          <input type="submit" value="Confirm" class="btn solid" />
+        </form>
+
+        <!-- Sign-Up Form -->
+        <form action="/next" class="sign-up-form" id="sign-up-form" method="POST">
+          <h2 class="title">Camp Details</h2>
+          <div class="input-field">
+            <i class="fas fa-tag"></i>
+            <input type="text" placeholder="Camp Title" name="campTitle" required />
+          </div>
+          <div class="input-row">
+            <div class="input-field">
+              <i class="fas fa-calendar-day"></i>
+              <input type="date" placeholder="Camp Date"name= "campDate" required />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-clock"></i>
+              <input type="time" placeholder="Camp End Time" name="campEndTime" required />
+            </div>
+          </div>
+          <!-- Camp Type Dropdown -->
+          <div class="input-field">
+            <i class="fas fa-stethoscope"></i>
+            <select id="campType" name="campType">
+              <option value="disabled selected hidden">Please Select Camp Type</option>
+                                    <option value="general health checkup" name="general health camp">General Health Checkup</option>
+                                    <option value="dental checkup"name="dental checkup">Dental Checkup</option>
+                                    <option value="eye checkup" name="eye checkup">Eye Checkup</option>
+                                    <option value="blood donation" name="blood donation">Blood Donation</option>
+                                    <option value="cardiology camp" name="cardiology camp">Cardiology Camp</option>
+                                    <option value="diabetes screening" name="diabetes screening">Diabetes Screening</option>
+
+            </select>
+          </div>
+          <div class="input-field">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" placeholder="Venue" name="venue" required />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-list-alt"></i>
+            <input type="text" placeholder="Expected Services Attendees" name="expectedServicesAttendees" required />
+          </div>
+          <div class="input-field textarea-field">
+            <i class="fas fa-medkit"></i>
+            <textarea placeholder="Benefits" name="benefits" required></textarea>
+          </div>
+          <input type="submit" class="btn" value="Next" />
+        </form>
+      </div>
+    </div>
+
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3>New here ?</h3>
+          <p>
+            Register your hospital and manage your medical camps efficiently.
+          </p>
+          <button class="btn transparent" id="sign-up-btn">
+            Camp Details
+          </button>
+        </div>
+        <!-- <img src="img/log.svg" class="image" alt="" /> -->
+      </div>
+      <div class="panel right-panel">
+        <div class="content">
+          <h3>One of us ?</h3>
+          <p>
+            Access your hospital's dashboard and manage your camps.
+          </p>
+          <button class="btn transparent" id="sign-in-btn">
+            Hospital Information
+          </button>
+        </div>
+        <!-- <img src="img/register.svg" class="image" alt="" /> -->
+      </div>
+    </div>
+  </div>
+
+  <script src="camp.js"></script>
+</body>
+</html>
